@@ -1,4 +1,4 @@
-package com.axelshittylanguage.gouda;
+package shittylanguage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,10 +6,12 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.BreakIterator;
-import java.util.List;
+import java.util.stream.Stream;
+import java.util.Scanner;
 
-public class Lox {
+public class Gouda {
+  static boolean hasError = false;
+
   public static void main(String[] args) throws IOException {
     if (args.length > 1) {
       System.out.println("Usage: jGouda [script]");
@@ -22,8 +24,9 @@ public class Lox {
   }
 
   private static void runFile(String path) throws IOException {
-    Byte[] bytes = Files.readAllBytes(Paths.get(path));
-    run(new String(bytes, Charset.defaultCharset(bytes)));
+    byte[] bytes = Files.readAllBytes(Paths.get(path));
+    run(new String(bytes, Charset.defaultCharset()));
+
   }
 
   private static void runPrompt() throws IOException {
@@ -40,7 +43,22 @@ public class Lox {
   }
 
   private static void run(String source) {
-    Scanner scanner =  new Scanner(source);
-    List<Token> tokens =    
+    Scanner scanner = new Scanner(source);
+    Stream<String> tokens = scanner.tokens();
+    tokens.forEach(el -> {
+      System.out.print(el);
+
+    });
+    scanner.close();
   }
+
+  static void error(int line, String message) {
+    report(line, "", message);
+  }
+
+  private static void report(int line, String where,
+      String message) {
+    System.out.print("[Line" + line + "] " + where + message);
+  }
+
 }
